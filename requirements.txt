@@ -1,0 +1,96 @@
+# =========================
+# Import / Export & Reports
+# =========================
+django-import-export==4.3.7      # Admin import/export (Excel, CSV)
+openpyxl==3.1.5                  # Excel file support
+pandas==2.2.3                    # Data processing & reports
+drf-standardized-errors==0.14.1
+
+# =========================
+# Core Django & REST API
+# =========================
+Django>5.0,<5.2                  # Django framework
+djangorestframework==3.15.2      # REST API core
+django-filter==25.1              # Queryset filtering
+django-cors-headers==4.6.0       # CORS support for frontend
+
+
+# =========================
+# Authentication & JWT
+# =========================
+djangorestframework_simplejwt==5.4.0  # JWT authentication
+PyJWT==2.7.0                          # JWT encoding/decoding
+python-jose==3.5.0                    # Advanced JWT & JWS
+djoser==2.3.1                         # Auth endpoints (login, register)
+cryptography==41.0.7                  # Crypto backend for JWT
+django-currentuser==0.8.0
+
+# =========================
+# Audit, History & Logging
+# =========================
+django-simple-history==3.7.0      # Model change history
+django-auditlog==3.1.2            # User action audit logs
+python-json-logger==3.3.0         # Structured JSON logs
+logger                             # Application logging helper
+
+# =========================
+# Background Tasks (Celery)
+# =========================
+django-redis==5.4.0
+celery==5.4.0                     # Async task queue
+redis==5.2.1                      # Message broker / cache
+django-redis==5.4.0               # Redis cache backend
+django-celery-beat==2.8.0         # Periodic tasks (cron)
+flower==2.0.1                     # Celery monitoring UI
+kombu==5.5.4                      # Celery messaging library
+channels==4.3.1
+channels-redis==4.3.0
+
+# =========================
+# Realtime / WebSocket
+# =========================
+channels==4.3.1                   # Django async & WebSocket
+channels-redis==4.3.0             # Redis channel layer
+django-eventstream==5.3.1         # Server-sent events (SSE)
+daphne==4.1.2                     # ASGI server
+websockets==15.0.1                # WebSocket protocol support
+
+# =========================
+# Database & File Storage
+# =========================
+psycopg2-binary==2.9.10           # PostgreSQL driver
+django-storages==1.14.6           # Cloud storage integration
+boto3==1.40.61                    # S3 / MinIO client
+
+# =========================
+# Development & Debug Tools
+# =========================
+django-debug-toolbar==6.1.0       # Debugging panel
+django-extensions==3.2.3          # Dev utilities & commands
+Werkzeug>=1.0,<4                  # Debug & dev tools
+
+# =========================
+# API Documentation
+# =========================
+drf-spectacular==0.28.0           # OpenAPI schema generator
+drf-spectacular-sidecar==2025.9.1 # Swagger / Redoc UI
+
+# =========================
+# Localization & Utilities
+# =========================
+persiantools==5.4.0               # Persian text utilities
+jdatetime==5.2.0                  # Jalali date support
+user-agents==2.2.0                # Client device detection
+geoip2==5.1.0                     # IP geolocation
+clickhouse_connect==0.9.2         # ClickHouse analytics
+
+# ======== invoice pdf =====
+weasyprint==67.0
+reportlab==3.6.13
+
+python-dotenv==1.0.1
+# django-unfold==0.35.0
+Pillow==10.0.0
+django-ckeditor-5==0.2.17
+gunicorn==23.0.0
+uvicorn==0.34.0
