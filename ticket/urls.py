@@ -5,17 +5,18 @@ from ticket import views
 app_name = 'ticket'
 router = DefaultRouter()
 
-router.register('tickets', views.TicketViewSet, basename='ticket')
-router.register('ticket-details', views.TicketDetailViewSet, basename='ticket_details')
-router.register('admin-tickets', views.AdminTicketListViewSet, basename='admin-ticket')
-router.register('admin-reviewer-list', views.AdminTicketReviewerList, basename='admin_reviewer_list')
+message_list = views.MessageViewSet.as_view({
+    'get': 'list',
+    'post': 'create'
+})
+ 
+router.register(r'profiles', views.ProfileViewSet, basename='profile')
+router.register(r'chats', views.ChatViewSet, basename='chat')
+router.register(r'messages', views.MessageViewSet, basename='message')
 
 urlpatterns = [
     path('', include(router.urls)),
-    ######### TICKET ######### 
-    path('user-create-ticket/', views.UserCreateTicket.as_view(), ),
-    path('create-ticket-detail/', views.CreateTicketDetail.as_view(), ),
-    path('admin/edit-ticket/<uuid:id>/', views.AdminEditTicket.as_view(), ),
-    path('admin/add-ticket-detail/<uuid:id>/', views.AdminAddTicketDetailView.as_view(), ),
-    path('admin-tickets-create/', views.AdminCreateTicketAPIView.as_view(), name='admin-create-ticket'),
+    path('create-chat-messages/<uuid:chat_id>/', views.MessageCreateView.as_view(), name='chat-messages-create'),
+    path('chats-messages/<uuid:chat_id>/', message_list, name='chat-messages'),
+
 ]
