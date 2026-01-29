@@ -10,48 +10,64 @@ from .models import (
     Message
 )
 
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# Ticket Admin
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-@admin.register(Ticket)
-class TicketAdmin(admin.ModelAdmin):
+@admin.register(Profile)
+class ProfileAdmin(ImportExportModelAdmin):
     list_display = (
-        'number',
-        'title',
-        'status',
-        'priority',
-        'is_active',
-        'is_resolved',
-        'created_by',
-        'created_at',
-    )
-
-    list_filter = (
-        'status',
-        'priority',
-        'is_active',
-        'is_resolved',
-    )
-    search_fields = (
-        'number',
-        'title',
-        'description',
-    )
-    ordering = ('-created_at',)
-
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# Ticket Detail Admin
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-@admin.register(TicketDetail)
-class TicketDetailAdmin(admin.ModelAdmin):
-    list_display = (
-        'ticket',
         'user',
         'created_at',
     )
     search_fields = (
-        'ticket__number',
         'user__username',
-        'message',
+        'user__email',
     )
     ordering = ('-created_at',)
+    
+@admin.register(Chat)
+class ChatAdmin(admin.ModelAdmin):
+    list_display = (
+        'name',
+        'creator',
+        'member_count',
+        'is_active',
+        'created_at',
+    )
+    search_fields = (
+        'name',
+        'creator__username',
+    )
+    ordering = ('-created_at',)
+
+@admin.register(ChatMembership)
+class ChatMembershipAdmin(admin.ModelAdmin):
+    list_display = (
+        'chat',
+        'user',
+        'is_admin',
+        'is_active',
+        'joined_at',
+    )
+    list_filter = (
+        'is_admin',
+        'is_active',
+    )
+    search_fields = (
+        'user__username',
+        'chat__name',
+    )
+    ordering = ('-joined_at',)
+
+@admin.register(Message)
+class MessageAdmin(admin.ModelAdmin):
+    list_display = (
+        'chat',
+        'sender',
+        'is_edited',
+        'sent_at',
+    )
+    search_fields = (
+        'sender__username',
+        'content',
+    )
+    ordering = ('-sent_at',)
+
+
