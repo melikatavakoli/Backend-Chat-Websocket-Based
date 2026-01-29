@@ -2,12 +2,12 @@ from rest_framework import viewsets
 from rest_framework import generics
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
-from ticket.models import (
+from chat.models import (
     Chat, 
     Message, 
     Profile, 
     )
-from ticket.serializers import (
+from chat.serializers import (
     ChatSerializer,
     MessageSerializer,
     ProfileSerializer, 

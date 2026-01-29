@@ -1,7 +1,7 @@
 from typing import Any
 from rest_framework import serializers
 from authentication.serializers import GenericModelSerializer
-from ticket.models import (
+from chat.models import (
     Chat, 
     ChatMembership, 
     Message, 

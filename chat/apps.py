@@ -7,5 +7,5 @@ class TicketConfig(AppConfig):
     verbose_name='chat'
 
     def ready(self) -> None:
-        import ticket.signals
+        import chat.signals
         
