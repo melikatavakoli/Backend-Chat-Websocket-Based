@@ -1,4 +1,4 @@
-# 🎧 Realtime Chat Application (Text & Voice)
+# 🎧 Realtime Chat Application
 
 A real-time chat application built with **WebSockets**, designed for fast, reliable, and interactive communication.  
 This project supports **text messaging, voice communication**, and advanced chat features like **replying and forwarding messages** — all in real time.
