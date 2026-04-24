@@ -23,7 +23,6 @@ The main goal of this project was to build a clean, scalable backend architectur
 - **Django / Django REST Framework**
 - **WebSockets**
 - **Redis** (message broker / pub-sub)
-- **JWT Authentication**
 - **Docker**
 - **PostgreSQL**
 - **Linux-based deployment**
