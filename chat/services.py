@@ -1,3 +1,4 @@
+from time import timezone
 from chat.models import ChatMembership, ChatPermission, ChatSettings
 
 def create_creator_membership(self):
@@ -121,7 +122,7 @@ def create_group(self, name, creator, is_private=False):
     self.is_private=is_private
     self.save()
     
-    ChatSettings.objects.create(chat=self, only_admins_can_add_members=False, only_admins_can_add_members=False, can_send_medica=True, can_send_voice=True, slowe_mode=0)
+    ChatSettings.objects.create(chat=self, only_admins_can_add_members=False, can_send_medica=True, can_send_voice=True, slowe_mode=0)
     ChatMembership.objects.create(chat=self, user=creator, role='creator', is_admin=True, is_active=True)
     
     return self
@@ -153,4 +154,3 @@ def can_user_forward(self, user):
 
 def can_user_edit(self, user):
     return self.chat.can_user_edit(user, self)
-
