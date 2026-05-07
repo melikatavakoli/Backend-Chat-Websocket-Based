@@ -1,6 +1,5 @@
 import logging
-from django.core.mail import send_mail
-from celery import shared_task
+
 import requests
 from celery import shared_task
 from django.conf import settings
@@ -56,6 +55,9 @@ def _send_sms(receptor, template, token=None, token2=None, token3=None):
     
     return None
 
+
+from django.core.mail import send_mail
+from celery import shared_task
 
 @shared_task
 def send_verification_email(email, code):
