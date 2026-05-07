@@ -1,5 +1,6 @@
 import logging
-
+from django.core.mail import send_mail
+from celery import shared_task
 import requests
 from celery import shared_task
 from django.conf import settings
@@ -54,3 +55,14 @@ def _send_sms(receptor, template, token=None, token2=None, token3=None):
         logger.error(f"Network error sending SMS to {receptor}", exc_info=True)
     
     return None
+
+
+@shared_task
+def send_verification_email(email, code):
+    send_mail(
+        subject="Verification Code",
+        message=f"Your verification code is: {code}",
+        from_email="noreply@example.com",
+        recipient_list=[email],
+        fail_silently=False,
+    )
