@@ -2,15 +2,11 @@ from pathlib import Path
 from dotenv import load_dotenv
 import os
 
-#---------------------------------------------
 load_dotenv()
-#---------------------------------------------
-BASE_DIR = Path(__file__).resolve().parent.parent
 
+BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 
-#---------------------------------------------
-# Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -22,9 +18,12 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'django_filters',
-    'post',
+    'core',
+    'chat'
 ]
-#---------------------------------------------
+
+DEBUG = os.getenv("DEBUG", "True") == "True"
+
 MIDDLEWARE = [
     'django_currentuser.middleware.ThreadLocalUserMiddleware',
     'django.middleware.security.SecurityMiddleware',
@@ -36,9 +35,19 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-#---------------------------------------------
+
 ROOT_URLCONF = 'config.urls'
-#---------------------------------------------
+ASGI_APPLICATION = 'config.asgi.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [('127.0.0.1', 6379)],
+        },
+    },
+}
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -54,12 +63,12 @@ TEMPLATES = [
         },
     },
 ]
-#---------------------------------------------
+
 WSGI_APPLICATION = 'config.wsgi.application'
-#---------------------------------------------
-# Database
+
 DATABASES = {
     'default': {
+        "ENGINE": "django.db.backends.postgresql",
         'NAME': os.getenv("POSTGRES_DB"),
         'USER': os.getenv("POSTGRES_USER"),
         'PASSWORD': os.getenv("POSTGRES_PASSWORD"),
@@ -67,8 +76,7 @@ DATABASES = {
         'PORT': os.getenv("POSTGRES_PORT"),
     }
 }
-#---------------------------------------------
-# Password validation
+
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -83,29 +91,26 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-# REST Framework Configuration
-# REST Framework Configuration
+
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.AllowAny'],
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
-#---------------------------------------------
+
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
-#---------------------------------------------
+
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-#---------------------------------------------
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-#SWAGGER
 SPECTACULAR_SETTINGS = {
     'TITLE': 'Chat API Documentation',
     'DESCRIPTION': 'API documentation for Chat',
@@ -114,28 +119,7 @@ SPECTACULAR_SETTINGS = {
     'SWAGGER_UI_SETTINGS': {
         'deepLinking': True,
     },
-    # Disable automatic tag generation based on URL prefixes
     'COMPONENT_SPLIT_REQUEST': True,
     'ENUM_NAME_OVERRIDES': {},
-    'TAG_SORTING': 'alpha',  # Sort tags alphabetically
+    'TAG_SORTING': 'alpha',
 }
-
-ENVIRONMENT = os.getenv("ENVIRONMENT")
-# Allowed hosts
-if ENVIRONMENT == "development":
-
-    print(ENVIRONMENT)
-    DEBUG = True
-    SESSION_COOKIE_SECURE = False
-    CSRF_COOKIE_SECURE = False
-    ALLOWED_EXPORT_IPS = os.environ.get("ALLOWED_EXPORT_HOSTS", default='').split(",")
-    ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "").split(",")
-    ALLOWED_USER = os.environ.get("ALLOWED_USER", default='')
-    SECRET_KEY_API = os.getenv("SECRET_KEY_API", "fallback-secret-key")
-    CORS_ALLOW_ALL_ORIGINS = False  # Explicitly disable
-    CORS_ALLOWED_ORIGINS = [
-
-    ]
-    CSRF_TRUSTED_ORIGINS = [
-
-    ]
