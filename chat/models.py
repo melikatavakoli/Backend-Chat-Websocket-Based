@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.db import models
-from chat.types import CHAT_TYPE, MESSAGE_PERMISSION, USER_ROLE, Medica_Type
+from chat.types import CHAT_TYPE, MESSAGE_PERMISSION, USER_ROLE, MediaType
 from core.models import GenericModel
 from django.contrib.contenttypes.models import ContentType
 
@@ -116,7 +116,7 @@ class Message(GenericModel):
     last_message = models.ForeignKey("chat.Message", on_delete=models.SET_NULL, null=True, blank=True, related_name="+")
     last_message_at = models.DateTimeField(null=True, blank=True)
     media_file = models.FileField('media file', upload_to='chat_media/%Y/%m/%d', blank=True, null=True)
-    media_type = models.CharField('media type', max_length=20, blank=True, null=True, choices=Medica_Type)
+    media_type = models.CharField('media type', max_length=20, blank=True, null=True, choices=MediaType)
     emoji = models.CharField('emoji', max_length=50, blank=True, null=True)
     forwarded_from_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="forwarded_messages")
     forwarded_from_chat = models.ForeignKey(Chat, on_delete=models.SET_NULL, null=True, blank=True, related_name="forwarded_messages")
