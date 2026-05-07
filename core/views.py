@@ -8,7 +8,8 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
-
+import random
+import string
 from common.paginations import CustomLimitOffsetPagination
 from core.serializers import (
     ChangePasswordSerializer,
@@ -16,10 +17,13 @@ from core.serializers import (
     LoginSerializer,
     RegisterSerializer,
     ResetPasswordSerializer,
+    SendEmailOTPSerializer,
     SendOTPSerializer,
     UserListSerializer,
 )
+from core.tasks import send_verification_email
 from .types import RoleType, StatusType
+from django_redis import get_redis_connection
 
 User = get_user_model()
 
@@ -64,7 +68,16 @@ class SendOTPView(APIView):
         serializer.save()
         return Response(status=status.HTTP_200_OK)
 
+class SendEmailOTPView(APIView):
+    permission_classes = [AllowAny]
 
+    @extend_schema(request=SendEmailOTPSerializer, responses=None)
+    def post(self, request):
+        serializer = SendEmailOTPSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(status=status.HTTP_200_OK)
+    
 class LoginOTPView(APIView):
     @extend_schema(request=LoginOtpSerializer, responses=TokenPairSerializer)
     def post(self, request):
@@ -102,7 +115,6 @@ class LogoutView(APIView):
                 {"detail": "refresh token required"},
                 status=status.HTTP_400_BAD_REQUEST
             )
-
         try:
             token = RefreshToken(refresh)
             token.blacklist()
@@ -111,7 +123,6 @@ class LogoutView(APIView):
                 {"detail": "invalid token"},
                 status=status.HTTP_400_BAD_REQUEST
             )
-
         return Response({"detail": "logout successful"}, status=status.HTTP_200_OK)
 
 
@@ -178,3 +189,4 @@ class UserListView(ListAPIView):
     )
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
+    
