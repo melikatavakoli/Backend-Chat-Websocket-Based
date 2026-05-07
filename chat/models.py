@@ -12,7 +12,6 @@ class Profile(GenericModel):
     avatar = models.ImageField('avatar', upload_to='upload_to_by_date', blank=True, null=True)
     bio = models.TextField('bio', null=True, blank=True)
     mobile = models.CharField(max_length=12, null=True, blank=True)
-    user_id = models.CharField(max_length=200, null=True, blank=True)
 
     class Meta:
         verbose_name = "profile"
