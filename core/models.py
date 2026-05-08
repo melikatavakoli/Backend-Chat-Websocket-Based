@@ -26,7 +26,9 @@ class GenericModel(models.Model):
     objects = SoftDeleteManager(alive_only=True)
     all_objects = SoftDeleteManager(alive_only=None)
     deleted_objects = SoftDeleteManager(alive_only=False)
-
+    is_deleted = models.BooleanField(default=False)
+    deleted_at = models.DateTimeField(null=True, blank=True)
+    
     class Meta:
         abstract = True
         indexes = (
@@ -35,9 +37,18 @@ class GenericModel(models.Model):
         
     def save(self, *args, **kwargs):
         current_user = get_current_user_or_none()
+
         if not self.pk and not self.created_by:
             self.created_by = current_user
+
         self.updated_by = current_user
+
+        update_fields = kwargs.get("update_fields")
+        if update_fields is not None:
+            update_fields = set(update_fields)
+            update_fields.add("updated_by")
+            kwargs["update_fields"] = update_fields
+
         super().save(*args, **kwargs)
 
     @classmethod

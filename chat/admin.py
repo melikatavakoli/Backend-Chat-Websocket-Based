@@ -1,15 +1,9 @@
 from django.contrib import admin
-from import_export import fields
-from import_export.admin import ImportExportModelAdmin
-from .models import (
-    Profile,
-    Chat,
-    ChatMembership,
-    Message
-)
+from .models import Profile, Chat, ChatMembership, Message
+
 
 @admin.register(Profile)
-class ProfileAdmin(ImportExportModelAdmin):
+class ProfileAdmin(admin.ModelAdmin):
     list_display = (
         'user',
         'created_at',
@@ -19,7 +13,8 @@ class ProfileAdmin(ImportExportModelAdmin):
         'user__email',
     )
     ordering = ('-created_at',)
-    
+
+
 @admin.register(Chat)
 class ChatAdmin(admin.ModelAdmin):
     list_display = (
@@ -35,13 +30,14 @@ class ChatAdmin(admin.ModelAdmin):
     )
     ordering = ('-created_at',)
 
+
 @admin.register(ChatMembership)
 class ChatMembershipAdmin(admin.ModelAdmin):
     list_display = (
         'chat',
         'user',
         'is_admin',
-        'is_active',
+               'is_active',
         'joined_at',
     )
     list_filter = (
@@ -53,6 +49,7 @@ class ChatMembershipAdmin(admin.ModelAdmin):
         'chat__name',
     )
     ordering = ('-joined_at',)
+
 
 @admin.register(Message)
 class MessageAdmin(admin.ModelAdmin):
@@ -67,5 +64,3 @@ class MessageAdmin(admin.ModelAdmin):
         'content',
     )
     ordering = ('-sent_at',)
-
-
