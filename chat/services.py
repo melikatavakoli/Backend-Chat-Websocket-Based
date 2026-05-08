@@ -18,7 +18,6 @@ def remove_member(self, user):
         return False
     membership.is_active = False
     membership.save(update_fields=['is_active'])
-    # Notifs.objects.create(user=user, title="حذف از چت", notif_type="chat_removed", description=f"شما از چت '{self.name}' حذف شدید")
     return True
 
 def can_remove_admin(self, user):
