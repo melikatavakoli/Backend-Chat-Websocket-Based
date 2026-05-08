@@ -7,7 +7,7 @@ from drf_spectacular.views import (
 )
 from django.urls import path,include
 from django.conf.urls.static import static
-from config import settings
+from django.conf import settings
 import debug_toolbar
 
 urlpatterns = [
@@ -21,3 +21,6 @@ urlpatterns += [
     path('api/v1/core/', include('core.urls', namespace="core")),
     path('api/v1/chat/', include('chat.urls', namespace="chat"))
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
