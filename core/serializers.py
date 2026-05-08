@@ -9,7 +9,6 @@ from rest_framework import serializers
 from .tasks import send_verification_sms
 from core.types import RoleType, StatusType
 
-
 User = get_user_model()
 logger = logging.getLogger(__name__)
 
@@ -73,11 +72,18 @@ class RegisterSerializer(serializers.Serializer):
         redis_conn.delete(f"verification_code:{data['mobile']}")
         return user
 
-
+class SendEmailOTPSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    def create(self, validated_data):
+        email = validated_data["email"]
+        verification_code = "".join(random.choices(string.digits, k=6))
+        redis_conn = get_redis_connection("default")
+        redis_conn.setex(f"verification_code:{email}", 300, verification_code)
+        return validated_data
+    
 class SendOTPSerializer(serializers.Serializer):
     mobile = serializers.CharField(max_length=11)
     mode = serializers.ChoiceField(choices=["register", "login", "forget_password"])
-
     def validate_mobile(self, value):
         if not value.isdigit() or len(value) != 11 or not value.startswith("09"):
             raise serializers.ValidationError("شماره موبایل معتبر نیست.")
@@ -141,18 +147,24 @@ class LoginSerializer(serializers.Serializer):
         mobile = data.get("mobile")
         password = data.get("password")
         request = self.context.get("request")
+
         try:
             user = User.objects.get(mobile=mobile)
         except User.DoesNotExist:
             raise serializers.ValidationError("کاربری با این شماره یافت نشد.")
+
         if user.status != StatusType.ACTIVE:
             # record_login_attempt(request, user=user, status=StatusType.FAILED)
             raise serializers.ValidationError("حساب کاربری فعال نیست.")
+
         if not user.check_password(password):
             # record_login_attempt(request, user=user, status=StatusType.FAILED)
             raise serializers.ValidationError("رمز عبور نامعتبر است.")
+
         data["user"] = user
+
         # record_login_attempt(request, user=user, status=StatusType.SUCCESS)
+
         return data
 
 
@@ -163,17 +175,23 @@ class ChangePasswordSerializer(serializers.Serializer):
 
     def validate(self, attrs):
         user = self.context["request"].user
+
         if not user.check_password(attrs["current_password"]):
             raise serializers.ValidationError("رمز عبور فعلی اشتباه است.")
+
         if attrs["password"] != attrs["re_password"]:
             raise serializers.ValidationError("رمز عبور مطابقت ندارد.")
+
         return attrs
 
     def save(self):
         user = self.context["request"].user
+
         user.set_password(self.validated_data["password"])
         user.password_updated_at = timezone.now()
+
         user.save(update_fields=["password", "password_updated_at"])
+
         return user
 
 
@@ -188,33 +206,32 @@ class ResetPasswordSerializer(serializers.Serializer):
         code = data["code"]
         password = data["password"]
         re_password = data["re_password"]
+
         if password != re_password:
             raise serializers.ValidationError("رمز عبور مطابقت ندارد.")
+
         try:
             user = User.objects.get(mobile=mobile)
         except User.DoesNotExist:
             raise serializers.ValidationError("کاربری با این شماره یافت نشد.")
+
         redis_conn = get_redis_connection("default")
         stored_code = redis_conn.get(f"verification_code:{mobile}")
+
         if not stored_code or stored_code.decode() != code:
             raise serializers.ValidationError("کد تأیید نامعتبر است.")
+
         data["user"] = user
+
         return data
 
     def save(self):
         user = self.validated_data["user"]
+
         user.set_password(self.validated_data["password"])
         user.save()
+
         redis_conn = get_redis_connection("default")
         redis_conn.delete(f"verification_code:{self.validated_data['mobile']}")
+
         return user
-
-
-class SendEmailOTPSerializer(serializers.Serializer):
-    email = serializers.EmailField()
-    def create(self, validated_data):
-        email = validated_data["email"]
-        verification_code = "".join(random.choices(string.digits, k=6))
-        redis_conn = get_redis_connection("default")
-        redis_conn.setex(f"verification_code:{email}", 300, verification_code)
-        return validated_data
