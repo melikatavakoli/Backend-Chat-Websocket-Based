@@ -12,6 +12,14 @@ EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+if (BASE_DIR / ".env.local").exists():
+    load_dotenv(BASE_DIR / ".env.local")
+elif (BASE_DIR / ".env.docker").exists():
+    load_dotenv(BASE_DIR / ".env.docker")
+else:
+    load_dotenv(BASE_DIR / ".env")
+    
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 
 INSTALLED_APPS = [
@@ -35,6 +43,7 @@ DEBUG = os.getenv("DEBUG", "True") == "True"
 MIDDLEWARE = [
     'django_currentuser.middleware.ThreadLocalUserMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -80,7 +89,7 @@ DATABASES = {
         'NAME': os.getenv("POSTGRES_DB"),
         'USER': os.getenv("POSTGRES_USER"),
         'PASSWORD': os.getenv("POSTGRES_PASSWORD"),
-        'HOST': os.getenv("POSTGRES_HOST"),
+        "HOST": os.getenv("POSTGRES_HOST"),
         'PORT': os.getenv("POSTGRES_PORT"),
     }
 }
@@ -111,10 +120,10 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+STATIC_URL = "/static/"
+STATICFILES_DIRS = [BASE_DIR / "static"]
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -135,9 +144,6 @@ SPECTACULAR_SETTINGS = {
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/1",
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-        }
+        "LOCATION": "redis://redis:6379/1",
     }
 }
